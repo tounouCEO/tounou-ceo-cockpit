@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Tounou CEO Cockpit</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="CEO Cockpit navigation">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div>
+          <p class="eyebrow">TOUNOU AI CEO</p>
+          <h1>Bryan OS</h1>
+        </div>
+      </div>
+      <nav class="nav-tabs" aria-label="화면 선택">
+        <button class="nav-tab active" data-view="today">오늘</button>
+        <button class="nav-tab" data-view="delegate">위임</button>
+        <button class="nav-tab" data-view="review">체크아웃</button>
+        <button class="nav-tab" data-view="settings">연동</button>
+      </nav>
+      <section class="sync-panel" aria-label="연동 상태">
+        <div class="sync-row"><span>Notion</span><strong id="notionSync">demo</strong></div>
+        <div class="sync-row"><span>Calendar</span><strong id="calendarSync">demo</strong></div>
+        <div class="sync-row"><span>Hermes</span><strong id="hermesSync">queue</strong></div>
+        <button id="refreshBtn" class="secondary full">데이터 새로고침</button>
+      </section>
+    </aside>
+
+    <main class="main">
+      <header class="hero">
+        <div>
+          <p class="eyebrow" id="todayLabel">오늘</p>
+          <h2>Bryan, 오늘 직접 볼 일은 <span id="focusCount">3</span>개입니다.</h2>
+          <p class="hero-sub" id="summaryLine">Notion 업무와 Google Calendar 일정을 통합해 대표 판단/위임/체크아웃 순서로 정리했습니다.</p>
+        </div>
+        <div class="hero-actions">
+          <button id="briefBtn" class="primary">오늘 브리핑 생성</button>
+          <button id="feedbackBtn" class="secondary">피드백 보기</button>
+        </div>
+      </header>
+
+      <section id="todayView" class="view active" aria-label="오늘 대시보드">
+        <div class="grid top-grid">
+          <section class="panel focus-panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">CEO FOCUS</p>
+                <h3>오늘 대표 판단 Top 3</h3>
+              </div>
+              <span class="pill danger">승인 필요</span>
+            </div>
+            <div id="topFocusList" class="card-list"></div>
+          </section>
+
+          <section class="panel meeting-panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">NEXT MEETING</p>
+                <h3>다음 미팅 30초 브리핑</h3>
+              </div>
+              <span class="pill">Calendar</span>
+            </div>
+            <div id="meetingBrief"></div>
+          </section>
+        </div>
+
+        <div class="grid bottom-grid">
+          <section class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">DELEGATION</p>
+                <h3>대표가 안 봐도 되는 일</h3>
+              </div>
+              <span class="pill success">시간 절약</span>
+            </div>
+            <div id="delegateList" class="compact-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">TIMELINE</p>
+                <h3>오늘 일정/업무 밀도</h3>
+              </div>
+              <span class="pill">Asia/Seoul</span>
+            </div>
+            <div id="timeline" class="timeline"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="delegateView" class="view" aria-label="위임 대시보드">
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">AGENT COMMAND</p>
+              <h3>AI CEO / 하위 에이전트 실행 큐</h3>
+            </div>
+            <span class="pill warning">승인 후 실행</span>
+          </div>
+          <div id="agentQueue" class="agent-grid"></div>
+        </section>
+      </section>
+
+      <section id="reviewView" class="view" aria-label="체크아웃">
+        <div class="grid bottom-grid">
+          <section class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">CHECKOUT</p>
+                <h3>오늘 닫을 대표 액션</h3>
+              </div>
+              <span class="pill danger">마감 전</span>
+            </div>
+            <div id="checkoutList" class="card-list"></div>
+          </section>
+          <section class="panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">LEARNING LOOP</p>
+                <h3>대표 피드백 로그</h3>
+              </div>
+              <button id="clearFeedback" class="secondary small">초기화</button>
+            </div>
+            <div id="feedbackLog" class="feedback-log"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view" aria-label="연동 설계">
+        <section class="panel prose">
+          <p class="eyebrow">INTEGRATION ROADMAP</p>
+          <h3>실제 연동 전환 원칙</h3>
+          <ul>
+            <li>Notion은 업무/목표/회의록의 원천으로 유지합니다.</li>
+            <li>Google Calendar는 일정/미팅 시간의 원천으로 유지합니다.</li>
+            <li>자체 DB는 캐시, 알림 상태, AI 실행 로그만 저장합니다.</li>
+            <li>AI 실행은 초안 생성 → 대표 승인 → Hermes 큐 등록 순서로 제한합니다.</li>
+            <li>모든 카드에는 출처, 동기화 시간, 원문 링크가 남아야 합니다.</li>
+          </ul>
+          <div class="integration-cards">
+            <article><strong>DemoJsonProvider</strong><span>현재 샘플 데이터</span></article>
+            <article><strong>NotionProvider</strong><span>업무 DB / 페이지 신호</span></article>
+            <article><strong>CalendarProvider</strong><span>오늘/이번주 일정</span></article>
+            <article><strong>HermesProvider</strong><span>AI 에이전트 실행 큐</span></article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="feedbackDialog">
+    <form method="dialog" class="dialog-card">
+      <h3 id="dialogTitle">피드백</h3>
+      <p id="dialogContext">이 카드의 판단 기준을 조정합니다.</p>
+      <textarea id="feedbackText" rows="4" placeholder="다음부터 어떤 기준으로 판단할지 적어주세요."></textarea>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">취소</button>
+        <button id="saveFeedback" value="default" class="primary">반영</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
