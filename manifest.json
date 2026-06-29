@@ -1,16 +1,19 @@
 {
-  "name": "Tounou CEO Cockpit",
-  "short_name": "Bryan OS",
-  "description": "Bryan 대표의 Notion·Google Calendar·AI Agent 실행 대시보드 MVP",
+  "name": "Tounou CEO Cockpit OS",
+  "short_name": "CEO Cockpit",
+  "description": "OKR, Calendar, Tasks, Wiki Briefing, Hermes AI를 통합한 Bryan CEO 실행 OS 목업",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1020",
-  "theme_color": "#111827",
+  "background_color": "#08090a",
+  "theme_color": "#08090a",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "./assets/icon.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml"
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
