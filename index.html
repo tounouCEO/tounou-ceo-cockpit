@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=light-mvp-1" />
+    <link rel="stylesheet" href="./styles.css?v=polish-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -24,7 +24,7 @@
           </div>
         </div>
         <nav class="nav-list">
-          <button class="nav-item is-active" data-view="today">오늘</button>
+          <button class="nav-item is-active" data-view="today" aria-current="page">오늘</button>
           <button class="nav-item" data-view="tasks">업무</button>
           <button class="nav-item" data-view="okr">OKR</button>
           <button class="nav-item" data-view="calendar">캘린더</button>
@@ -40,11 +40,11 @@
       <main class="workspace">
         <header class="topbar">
           <div>
-            <p class="eyebrow">Notion-like Light Workspace</p>
+            <p class="eyebrow">Notion형 실행 문서</p>
             <h2 id="view-title">오늘</h2>
           </div>
           <div class="topbar-actions">
-            <button class="btn ghost" id="reset-demo">데모 초기화</button>
+            <button class="btn ghost subtle" id="reset-demo">데모 초기화</button>
             <button class="btn primary" id="new-task-top">+ 업무 생성</button>
           </div>
         </header>
@@ -54,7 +54,7 @@
             <div>
               <p class="eyebrow">오늘 대표가 볼 3가지</p>
               <h3>Calendar와 OKR을 기준으로 오늘 실행을 압축합니다.</h3>
-              <p class="muted">현재 버전은 로컬 저장 기반 1차 개발본입니다. 실제 Notion/Google 연동 전, 업무/OKR/브리핑 사용성을 먼저 고정합니다.</p>
+              <p class="muted">로컬 저장 기반 MVP입니다. 실제 Notion/Google 연동 전, 업무·OKR·브리핑 사용성을 먼저 고정합니다.</p>
             </div>
             <div class="hero-meta">
               <span id="today-date"></span>
@@ -103,7 +103,7 @@
         <section class="view" id="view-tasks">
           <div class="section-toolbar">
             <div>
-              <p class="eyebrow">Weekly · Daily Execution</p>
+              <p class="eyebrow">주간·일간 실행</p>
               <h3>업무 보드</h3>
             </div>
             <div class="toolbar-actions">
@@ -113,6 +113,8 @@
                 <option value="P1">P1</option>
                 <option value="Today">오늘</option>
                 <option value="This Week">이번 주</option>
+                <option value="Waiting">대기</option>
+                <option value="Done">완료</option>
               </select>
               <button class="btn primary" id="new-task-board">+ 업무</button>
             </div>
@@ -123,10 +125,10 @@
         <section class="view" id="view-okr">
           <div class="section-toolbar">
             <div>
-              <p class="eyebrow">Company · Personal OKR</p>
-              <h3>OKR Center</h3>
+              <p class="eyebrow">회사·개인 OKR</p>
+              <h3>OKR 센터</h3>
             </div>
-            <button class="btn secondary" id="new-okr">+ Objective</button>
+            <button class="btn secondary" id="new-okr">+ 목표</button>
           </div>
           <div id="okr-list" class="okr-list"></div>
         </section>
@@ -164,7 +166,7 @@
         <section class="view" id="view-briefing">
           <div class="section-toolbar">
             <div>
-              <p class="eyebrow">Wiki-based AI Briefing</p>
+              <p class="eyebrow">위키 기반 AI 브리핑</p>
               <h3>대표 브리핑 센터</h3>
             </div>
             <button class="btn secondary" id="generate-briefing">브리핑 새로고침</button>
@@ -183,10 +185,10 @@
             </article>
             <article class="paper-card">
               <h3>승인 게이트</h3>
-              <p class="muted">AI는 초안·후보 생성까지만 수행합니다. 외부 발송, Notion write-back, Calendar write는 대표 승인 후 실행합니다.</p>
+              <p class="muted">AI는 초안·후보 생성까지만 수행합니다. 외부 발송, Notion 반영, Calendar 쓰기는 대표 승인 후 실행합니다.</p>
               <div class="approval-box">
                 <strong>다음 구현</strong>
-                <p>Signed webhook + audit log + backend token vault</p>
+                <p>Signed webhook + 감사 로그 + backend token vault</p>
               </div>
             </article>
           </div>
@@ -195,21 +197,22 @@
     </div>
 
     <nav class="mobile-tabs" aria-label="모바일 내비게이션">
-      <button class="is-active" data-view="today">오늘</button>
+      <button class="is-active" data-view="today" aria-current="page">오늘</button>
       <button data-view="tasks">업무</button>
       <button data-view="okr">OKR</button>
       <button data-view="calendar">캘린더</button>
       <button data-view="briefing">브리핑</button>
+      <button data-view="hermes">Hermes</button>
     </nav>
 
-    <dialog id="task-dialog" class="task-dialog">
+    <dialog id="task-dialog" class="task-dialog" aria-labelledby="dialog-title">
       <form method="dialog" id="task-form">
         <div class="dialog-head">
           <div>
-            <p class="eyebrow">Task Card</p>
+            <p class="eyebrow">업무 카드</p>
             <h3 id="dialog-title">업무 생성</h3>
           </div>
-          <button class="icon-btn" value="cancel" aria-label="닫기">×</button>
+          <button type="button" class="icon-btn" data-close-dialog="task-dialog" aria-label="닫기">×</button>
         </div>
         <input type="hidden" id="task-id" />
         <label>제목<input id="task-title" required placeholder="예: 29CM 주간 매출 리스크 점검" /></label>
@@ -228,14 +231,14 @@
       </form>
     </dialog>
 
-    <dialog id="okr-dialog" class="task-dialog">
+    <dialog id="okr-dialog" class="task-dialog" aria-labelledby="okr-dialog-title">
       <form method="dialog" id="okr-form">
         <div class="dialog-head">
           <div>
             <p class="eyebrow">Objective</p>
-            <h3>Objective 생성</h3>
+            <h3 id="okr-dialog-title">Objective 생성</h3>
           </div>
-          <button class="icon-btn" value="cancel" aria-label="닫기">×</button>
+          <button type="button" class="icon-btn" data-close-dialog="okr-dialog" aria-label="닫기">×</button>
         </div>
         <label>Objective<input id="okr-title" required placeholder="예: 3년 내 연매출 1000억을 향한 실행 체계 구축" /></label>
         <label>Key Result<textarea id="okr-krs" rows="5" placeholder="한 줄에 하나씩 입력"></textarea></label>
@@ -243,6 +246,6 @@
       </form>
     </dialog>
 
-    <script src="./app.js?v=light-mvp-1"></script>
+    <script src="./app.js?v=polish-1"></script>
   </body>
 </html>
