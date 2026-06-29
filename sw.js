@@ -1,5 +1,5 @@
-const CACHE_NAME = 'tounou-ceo-os-light-v1';
-const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.json', './assets/icon.svg', './favicon.ico'];
+const CACHE_NAME = 'tounou-ceo-os-light-v2';
+const ASSETS = ['./', './index.html', './styles.css?v=light-mvp-1', './app.js?v=light-mvp-1', './manifest.json', './assets/icon.svg', './favicon.ico'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
