@@ -1,286 +1,303 @@
-const DATA = {
-  nav: [
-    { id: 'today', icon: '◒', label: 'Today', count: '12' },
-    { id: 'okr', icon: '◎', label: 'OKR', count: '8' },
-    { id: 'weekly', icon: '▦', label: 'Weekly', count: '17' },
-    { id: 'daily', icon: '✓', label: 'Daily', count: '9' },
-    { id: 'calendar', icon: '◷', label: 'Calendar', count: '6' },
-    { id: 'briefing', icon: '✦', label: 'Briefing', count: '4' },
-    { id: 'hermes', icon: '⌁', label: 'Hermes', count: '5' }
-  ],
-  briefings: [
-    { title: '29CM 35% 매출축 방어', body: '오후 미팅 전 29CM 판매 캘린더·신상품 노출·할인 정책을 확정해야 합니다. Wiki 기준 29CM 목표 ROAS는 1000%입니다.' },
-    { title: '파자마 제작 일정 압축', body: '7/1 컨셉 5개 → 7/3 제작파일 20개 → 7/6 완성 조건. 오늘 디자인/MD 실행 누락 확인이 필요합니다.' },
-    { title: 'CRM 테스트는 대표 승인 없이 ON 가능', body: '하루 카카오 예산 10만원 이하 + 피드백 에이전트 승인 건은 AI CEO가 테스트 후 결과 보고합니다.' }
+const STORAGE_KEY = 'tounou-ceo-os-v1';
+
+const seed = {
+  okrs: [
+    {
+      id: 'okr-revenue-100b',
+      title: '3년 내 연매출 1000억 달성을 위한 실행 체계 구축',
+      krs: [
+        { id: 'kr-d2c-roas', title: '자사몰 ROAS 400% 기준의 반복 가능한 성장 루프 구축', progress: 38 },
+        { id: 'kr-29cm', title: '29CM 월매출 기여 구조를 안정화하고 상품별 승자 식별', progress: 52 },
+        { id: 'kr-ai-os', title: 'AI CEO/Hermes 기반 대표 실행 OS 정착', progress: 21 }
+      ]
+    },
+    {
+      id: 'okr-personal-focus',
+      title: 'Bryan 대표의 주간·데일리 의사결정 피로도 50% 감소',
+      krs: [
+        { id: 'kr-top3', title: '매일 오전 Top 3 의사결정 항목 자동 정리', progress: 35 },
+        { id: 'kr-meeting', title: '모든 주요 미팅 전 3분 브리핑 체계화', progress: 28 }
+      ]
+    }
   ],
   tasks: [
-    { id: '29cm', p: 'P0', title: '29CM 하반기 매출 방어 미팅 준비', status: 'In Progress', due: '14:00', okr: '회사 KR1 월매출 5억→8억', source: 'Calendar', team: 'MD·마케팅', body: '미팅 전 확인: 베스트 SKU, 노출 구좌, 7월 프로모션, 29CM 전용 번들/세트 제안. 질문: 침구/러그/파자마 중 29CM가 가장 키울 수 있는 카테고리 우선순위.', checks: ['29CM 최근 매출 원천 Sheet 확인', '상위 SKU 20개 추출', '노출/쿠폰 정책 질문지 작성'] },
-    { id: 'pajama', p: 'P0', title: '파자마 7/6 완성 역산 실행안 확정', status: 'Needs Decision', due: '18:00', okr: '회사 KR2 신제품 매출 기여', source: 'Manual', team: '상품기획', body: '강혜현 합류 직후 바로 실행 가능한 디자인/파일/샘플링 프로세스로 쪼개야 함. 7/3 제작파일 20개가 병목.', checks: ['컨셉 5개 기준 확정', '작가 IP 후보 연결', '제작파일 템플릿 준비'] },
-    { id: 'crm', p: 'P1', title: 'CRM 카카오 소재 3종 ON 테스트', status: 'Queued', due: '16:30', okr: '회사 KR3 재구매율 20%대→30%', source: 'AI', team: '마케팅', body: '단기 ROAS보다 성공공식 탐색이 우선. 오디언스/타겟/소재를 넓게 테스트하고 결과만 데일리 보고.', checks: ['피드백 에이전트 승인 확인', '카카오 예산 10만원 이하 확인', '성과 로그 저장'] },
-    { id: 'okr', p: 'P1', title: '7월 회사/개인 OKR 정리', status: 'Draft', due: '11:30', okr: 'CEO 개인 O1 실행 집중도', source: 'Manual', team: 'CEO', body: '회사 OKR과 대표 개인 OKR을 한 화면에서 연결. 업무 생성 기준을 OKR에서 끌어오도록 설계.', checks: ['회사 O/KR 3개 이내', '개인 O/KR 3개 이내', '이번 주 업무 연결'] },
-    { id: 'wiki', p: 'P2', title: '29CM·파자마 관련 위키 브리핑 보강', status: 'Waiting', due: '20:00', okr: 'AI CEO 운영 고도화', source: 'Wiki', team: 'AI CEO', body: '오늘 일정과 업무에 붙일 위키 근거를 더 촘촘하게 연결. 출처 링크와 stale 여부 표시.', checks: ['29CM 문서 링크', '파자마 일정 링크', '브리핑 stale 표시'] }
+    {
+      id: crypto.randomUUID(),
+      title: '29CM 주간 매출 리스크 점검',
+      priority: 'P0',
+      status: 'Today',
+      krId: 'kr-29cm',
+      body: '- 수기 Sheet 기준 전일/주간 매출 확인\n- 상품별 승자/하락 SKU 확인\n- MD/마케팅 액션 분리\n\nAI 요약: 29CM은 자사몰과 목표 ROAS 기준이 다르므로 별도 판단합니다.',
+      source: 'Manual',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: crypto.randomUUID(),
+      title: 'CEO OS 업무 카드 에디터 MVP 검토',
+      priority: 'P1',
+      status: 'In Progress',
+      krId: 'kr-ai-os',
+      body: '- Markdown/Rich text 병행 저장\n- Notion write-back은 승인 기반\n- 오늘은 로컬 CRUD 사용성부터 확정',
+      source: 'Manual',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: crypto.randomUUID(),
+      title: '오늘 미팅 후속 조치 체크아웃',
+      priority: 'P1',
+      status: 'This Week',
+      krId: 'kr-top3',
+      body: '- 미팅 결정사항 정리\n- 후속 담당자 지정\n- Discord CEO 채널 보고 초안 생성',
+      source: 'Manual',
+      createdAt: new Date().toISOString()
+    }
   ],
-  calendar: [
-    { time: '09:30', title: 'Daily CEO Briefing', sub: 'AI CEO · Wiki/Calendar/Task 종합', task: '자동 생성 완료' },
-    { time: '11:30', title: '7월 OKR 정리', sub: '회사 OKR + Bryan 개인 OKR', task: '업무 후보 생성' },
-    { time: '14:00', title: '29CM 하반기 전략 미팅', sub: 'MD·마케팅 · 매출/노출/프로모션', task: '준비/후속 업무 연결' },
-    { time: '16:30', title: 'CRM 소재 테스트 체크', sub: '카카오 예산 10만원 이하', task: '자동 체크리스트 생성' }
+  events: [
+    { eventId: 'gcal-standup-001', time: '10:00', title: '마케팅 주간 액션 싱크', attendees: '마케팅팀', deleted: false },
+    { eventId: 'gcal-md-002', time: '14:00', title: 'MD 상품 우선순위 리뷰', attendees: '상품기획팀', deleted: false },
+    { eventId: 'gcal-coo-003', time: '17:00', title: 'COO 복귀 업무 브리핑', attendees: 'COO / AI CEO', deleted: false }
   ],
-  okrs: [
-    { type: 'Company', title: '3년 내 연매출 1000억 구조 만들기', progress: 38, krs: [
-      { title: '월매출 5억 → 8억 운영체계 구축', progress: 42, owner: 'CEO·COO' },
-      { title: '29CM ROAS 1000% 기준 유지', progress: 61, owner: '마케팅·MD' },
-      { title: '신제품 카테고리 월 1억 후보 발굴', progress: 24, owner: '상품기획' }
-    ]},
-    { type: 'Personal', title: 'Bryan 대표의 실행 집중도와 의사결정 속도 개선', progress: 47, krs: [
-      { title: '매일 P0 3건 이하로 압축', progress: 52, owner: 'CEO' },
-      { title: '주간 OKR 리뷰 1회 고정', progress: 33, owner: 'CEO' },
-      { title: 'AI 위임 업무 70% 이상 비동기 처리', progress: 58, owner: 'AI CEO' }
-    ]}
+  hermesJobs: [
+    { id: crypto.randomUUID(), title: '위키에서 금주 미완료 결정사항 재조회', status: 'queued' },
+    { id: crypto.randomUUID(), title: 'Calendar 기반 미팅 브리핑 후보 생성', status: 'needs approval' }
   ],
-  weekly: [
-    '29CM 매출 방어 구조 확정',
-    '파자마 7/6 완성 로드맵 실행',
-    'CRM 성공공식 탐색 테스트 5건',
-    'CEO Cockpit OS 목업 사용성 검증'
-  ],
-  kanban: {
-    'This Week': ['29CM 운영 전략 정리', '7월 OKR 초안', '파자마 작가 IP 후보'],
-    'In Progress': ['CEO Cockpit 목업', 'CRM 카카오 소재'],
-    'Waiting': ['Notion Write-back 승인', 'Vercel 재인증'],
-    'Done': ['GitHub Pages 배포', '1차 PWA 검증']
-  },
-  docs: [
-    { title: '29CM 매출 원천 Sheet', desc: '일 1회 수기 업데이트. 29CM 매출 우선 원천.' },
-    { title: '뚜누 데이터/CRM 규칙', desc: '0원 주문 제외, Hackle paymentAmount>0 필터, 목표 ROAS 기준.' },
-    { title: '파자마 제작 일정 메모리', desc: '7/1 컨셉5 → 7/3 제작파일20 → 7/6 완성.' },
-    { title: '뚜누 브랜드 온톨로지', desc: 'Everyday Art, Better Mood. 타겟/채널/카테고리.' }
-  ],
-  approvals: [
-    { title: 'Notion 업무 DB 생성', body: '실제 DB write-back 전 대표 승인 필요' },
-    { title: 'Google OAuth production 연결', body: '토큰 저장/암호화/권한 범위 확인 필요' },
-    { title: 'Discord 자동 보고 활성화', body: '초안 생성은 허용, 실제 발송은 승인 후 실행' }
-  ]
+  briefings: []
 };
 
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-const state = { screen: 'today', density: Number(localStorage.getItem('cockpitDensity') || '1') };
+let state = loadState();
 
-function init() {
-  document.documentElement.style.setProperty('--density', String(state.density));
-  renderNavigation();
-  renderToday();
-  renderOKR();
-  renderWeekly();
-  renderDaily();
-  renderCalendar();
-  renderBriefing();
-  renderHermes();
-  wireEvents();
-  navigate('today');
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return structuredClone(seed);
+    const parsed = JSON.parse(saved);
+    return { ...structuredClone(seed), ...parsed };
+  } catch {
+    return structuredClone(seed);
+  }
 }
 
-function renderNavigation() {
-  const nav = DATA.nav.map(item => `
-    <button class="nav-item" data-screen="${item.id}" type="button">
-      <span class="left"><span>${item.icon}</span><span>${item.label}</span></span>
-      <span class="count">${item.count}</span>
-    </button>
-  `).join('');
-  $('#navList').innerHTML = nav;
-  $('#mobileTabbar').innerHTML = DATA.nav.slice(0, 5).map(item => `<button data-screen="${item.id}" type="button"><span>${item.icon}</span><span>${item.label}</span></button>`).join('');
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function renderToday() {
-  $('#briefingList').innerHTML = DATA.briefings.map((item, idx) => `
-    <div class="briefing-item">
-      <div class="briefing-no">0${idx + 1}</div>
-      <div><b>${item.title}</b><p>${item.body}</p></div>
-    </div>
-  `).join('');
-  $('#todayTasks').innerHTML = DATA.tasks.slice(0, 4).map(taskCard).join('');
-  $('#calendarTimeline').innerHTML = DATA.calendar.map(event => `
-    <div class="timeline-item">
-      <div class="timeline-time">${event.time}</div>
-      <div><div class="timeline-title">${event.title}</div><div class="timeline-sub">${event.sub}<br>${event.task}</div></div>
-    </div>
-  `).join('');
-  $('#okrSignal').innerHTML = DATA.okrs.map(okr => `
-    <div class="okr-row">
-      <div class="okr-row-top"><span>${okr.type} · ${okr.title}</span><strong>${okr.progress}%</strong></div>
-      <div class="progress-track"><div class="progress-fill" style="width:${okr.progress}%"></div></div>
-    </div>
-  `).join('');
-  $('#jobStack').innerHTML = [
-    ['Wiki briefing generator', '오늘 14:00 29CM 미팅용 근거 문서 4개 연결 완료', 'ok'],
-    ['Calendar sync worker', '4개 일정 확인, 3개 업무 후보 생성', 'ok'],
-    ['Notion write-back bridge', '대표 승인 전까지 dry-run only', 'warn']
-  ].map(([title, body, status]) => `<div class="job-card"><div><b>${title}</b><p>${body}</p></div><span class="status-dot ${status}"></span></div>`).join('');
+function krOptions() {
+  return state.okrs.flatMap(o => o.krs.map(kr => ({ ...kr, objective: o.title })));
 }
 
-function taskCard(task) {
-  const p = task.p.toLowerCase();
-  return `
-    <div class="task-card" data-open-task="${task.id}">
-      <div class="priority ${p}">${task.p}</div>
-      <div>
-        <h4>${task.title}</h4>
-        <div class="task-meta">
-          <span class="meta-chip">${task.status}</span>
-          <span class="meta-chip">${task.due}</span>
-          <span class="meta-chip">${task.source}</span>
-          <span class="meta-chip">${task.okr}</span>
-        </div>
-      </div>
-      <button class="task-open" type="button" aria-label="업무 열기">›</button>
-    </div>
-  `;
+function findKr(id) {
+  return krOptions().find(kr => kr.id === id);
 }
 
-function renderOKR() {
-  $('#okrBoards').innerHTML = DATA.okrs.map(okr => `
-    <article class="panel okr-board">
-      <div class="panel-header">
-        <div><p class="eyebrow">${okr.type} OKR</p><h3>${okr.title}</h3></div>
-        <span class="pill">${okr.progress}%</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" style="width:${okr.progress}%"></div></div>
-      <div class="kr-list">
-        ${okr.krs.map(kr => `
-          <div class="kr-card">
-            <h4>${kr.title}</h4>
-            <div class="kr-meta"><span>${kr.owner}</span><strong>${kr.progress}%</strong></div>
-            <div class="progress-track"><div class="progress-fill" style="width:${kr.progress}%"></div></div>
-          </div>
-        `).join('')}
-      </div>
-    </article>
-  `).join('');
+function taskSummary(body = '') {
+  return body.replace(/[#*`>-]/g, '').split('\n').map(s => s.trim()).filter(Boolean).slice(0, 2).join(' · ');
 }
 
-function renderWeekly() {
-  $('#weeklyFocus').innerHTML = DATA.weekly.map((item, idx) => `<div class="focus-card"><b>${idx + 1}. ${item}</b><p>회사/개인 OKR에 연결된 이번 주 우선순위</p></div>`).join('');
-  $('#kanban').innerHTML = Object.entries(DATA.kanban).map(([col, cards]) => `
-    <div class="kanban-col">
-      <h4><span>${col}</span><span>${cards.length}</span></h4>
-      ${cards.map(card => `<div class="kanban-card"><b>${card}</b><span>OKR 연결 · 담당/기한 지정 가능</span></div>`).join('')}
-    </div>
-  `).join('');
-}
-
-function renderDaily() {
-  const days = ['월 29', '화 30', '수 01', '목 02', '금 03'];
-  $('#dayStrip').innerHTML = days.map((day, idx) => `<div class="day-pill ${idx === 0 ? 'active' : ''}"><b>${day.split(' ')[0]}</b><span>${day.split(' ')[1]}</span></div>`).join('');
-  $('#dailyTasks').innerHTML = DATA.tasks.map(taskCard).join('');
-  const task = DATA.tasks[0];
-  $('#editorPreview').innerHTML = `
-    <div class="editor-cover"></div>
-    <div class="editor-body">
-      <h4>${task.title}</h4>
-      <div class="editor-block"><strong>AI 요약</strong><br>${task.body}</div>
-      <div class="editor-block"><strong>체크리스트</strong>${task.checks.map((c, i) => `<div class="checkline"><span class="checkbox">${i === 0 ? '✓' : ''}</span>${c}</div>`).join('')}</div>
-      <div class="editor-block"><strong>관련 근거</strong><br>[[29CM 매출 원천 Sheet]] · [[뚜누 데이터/CRM 규칙]]</div>
-    </div>
-  `;
-}
-
-function renderCalendar() {
-  $('#calendarBoard').innerHTML = DATA.calendar.map(event => `
-    <div class="calendar-event">
-      <div class="timeline-time">${event.time}</div>
-      <div><b>${event.title}</b><div class="timeline-sub">${event.sub}</div></div>
-      <span class="pill">${event.task}</span>
-    </div>
-  `).join('');
-}
-
-function renderBriefing() {
-  $('#briefingDoc').innerHTML = [
-    ['오늘의 결론', ['29CM 미팅은 하반기 매출 방어축으로 P0입니다.', '파자마 일정은 오늘 역산하지 않으면 7/6 완성 가능성이 급락합니다.', 'CRM 테스트는 승인 조건 충족 시 AI CEO가 바로 ON합니다.']],
-    ['미팅 준비 질문', ['29CM 내 뚜누 침구/러그/파자마 카테고리별 성장 여지는 어디인가?', '쿠폰/노출/기획전 중 ROAS 1000% 유지에 가장 유리한 조합은 무엇인가?', '29CM 단독 구성 또는 선출시 SKU를 만들 수 있는가?']],
-    ['대표 결정 필요', ['파자마 컨셉 5개 우선순위', '29CM 하반기 목표 매출 기준', 'Notion write-back 실데이터 연결 승인 여부']]
-  ].map(([title, bullets]) => `<div class="doc-section"><h4>${title}</h4><ul>${bullets.map(b => `<li>${b}</li>`).join('')}</ul></div>`).join('');
-  $('#sourceList').innerHTML = DATA.docs.map(doc => `<div class="source-card"><b>${doc.title}</b><p>${doc.desc}</p></div>`).join('');
-}
-
-function renderHermes() {
-  $('#hermesConsole').innerHTML = [
-    ['08:30:01', 'ok', 'Daily briefing job completed · 4 sources · 12 tasks scanned'],
-    ['09:10:18', 'accent', 'Calendar sync: Google event_id dedupe active'],
-    ['09:42:55', 'ok', 'Wiki retrieval: 29CM, CRM, Pajama, Data Rules matched'],
-    ['10:13:21', 'warn', 'Notion write-back disabled until approval gate is opened'],
-    ['10:31:04', 'accent', 'Hermes Bridge mock endpoint ready: /api/hermes/jobs']
-  ].map(([time, tone, text]) => `<span class="console-line"><span class="console-time">${time}</span> <span class="console-${tone}">${text}</span></span>`).join('');
-  $('#approvalStack').innerHTML = DATA.approvals.map(item => `<div class="approval-card"><b>${item.title}</b><p>${item.body}</p></div>`).join('');
-}
-
-function wireEvents() {
-  document.addEventListener('click', (event) => {
-    const screenBtn = event.target.closest('[data-screen]');
-    if (screenBtn) navigate(screenBtn.dataset.screen);
-
-    const taskBtn = event.target.closest('[data-open-task]');
-    if (taskBtn) openTask(taskBtn.dataset.openTask);
-  });
-  $('#mobileMenu').addEventListener('click', () => $('.sidebar').classList.toggle('open'));
-  $('#briefingBtn').addEventListener('click', () => toast('AI 브리핑 재생성 목업 완료 · 실제 버전에서는 Hermes job이 실행됩니다.'));
-  $('#newTaskBtn').addEventListener('click', () => toast('업무 생성 플로우 목업 · 다음 구현에서 DB CRUD로 연결합니다.'));
-  $('#commandTrigger').addEventListener('click', () => toast('⌘K 검색 목업 · 업무/일정/위키 통합 검색 진입점입니다.'));
-  $('#densityBtn').addEventListener('click', () => {
-    state.density = state.density === 1 ? 0.82 : 1;
-    localStorage.setItem('cockpitDensity', String(state.density));
-    document.documentElement.style.setProperty('--density', String(state.density));
-    toast(state.density === 1 ? '기본 밀도' : '고밀도 모드');
-  });
-  $('#runHermesBtn').addEventListener('click', () => {
-    $('#hermesConsole').insertAdjacentHTML('afterbegin', `<span class="console-line"><span class="console-time">${new Date().toLocaleTimeString('ko-KR', { hour12: false })}</span> <span class="console-ok">Manual health check: bridge reachable · queue dry-run ok</span></span>`);
-    toast('Hermes 상태 점검 목업 실행 완료');
-  });
-}
-
-function navigate(id) {
-  state.screen = id;
-  $$('.screen').forEach(screen => screen.classList.toggle('active-screen', screen.id === id));
-  $$('.nav-item, .mobile-tabbar button').forEach(btn => btn.classList.toggle('active', btn.dataset.screen === id));
-  const nav = DATA.nav.find(n => n.id === id);
-  $('#sectionTitle').textContent = nav ? nav.label === 'Today' ? 'Today Cockpit' : nav.label : id;
-  $('#sectionEyebrow').textContent = id === 'today' ? 'DAILY EXECUTION' : 'CEO COCKPIT OS';
-  $('.sidebar').classList.remove('open');
+function setView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('is-active', v.id === `view-${view}`));
+  document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('is-active', b.dataset.view === view));
+  const titles = { today: '오늘', tasks: '업무', okr: 'OKR', calendar: '캘린더', briefing: '브리핑', hermes: 'Hermes' };
+  document.getElementById('view-title').textContent = titles[view] || '오늘';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function openTask(id) {
-  const task = DATA.tasks.find(t => t.id === id) || DATA.tasks[0];
-  $('#dialogTitle').textContent = task.title;
-  $('#dialogBody').innerHTML = `
-    <div class="dialog-card">
-      <h4>업무 메모</h4>
-      <textarea>${task.body}\n\n결정사항:\n- \n\n후속 액션:\n- </textarea>
-    </div>
-    <div class="dialog-card">
-      <h4>속성</h4>
-      <div class="rule-list">
-        <div><strong>우선순위</strong><span>${task.p}</span></div>
-        <div><strong>상태</strong><span>${task.status}</span></div>
-        <div><strong>기한</strong><span>${task.due}</span></div>
-        <div><strong>연결 OKR</strong><span>${task.okr}</span></div>
-        <div><strong>출처</strong><span>${task.source}</span></div>
-        <div><strong>팀</strong><span>${task.team}</span></div>
-      </div>
-      <div class="editor-block"><strong>체크리스트</strong>${task.checks.map((c, i) => `<div class="checkline"><span class="checkbox">${i === 0 ? '✓' : ''}</span>${c}</div>`).join('')}</div>
-    </div>
-  `;
-  $('#taskDialog').showModal();
+function badge(text, extra = '') {
+  return `<span class="badge ${extra}">${text}</span>`;
 }
 
-function toast(message) {
-  const el = $('#toast');
-  el.textContent = message;
-  el.classList.add('show');
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove('show'), 2400);
+function renderToday() {
+  const date = new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }).format(new Date());
+  document.getElementById('today-date').textContent = date;
+  const todayTasks = state.tasks.filter(t => t.status === 'Today' || t.status === 'In Progress');
+  const doneToday = state.tasks.filter(t => t.status === 'Done').length;
+  const progress = state.tasks.length ? Math.round((doneToday / state.tasks.length) * 100) : 0;
+  document.getElementById('today-progress').textContent = `${progress}%`;
+  document.getElementById('today-focus').innerHTML = todayTasks.length ? todayTasks.map(renderListTask).join('') : '<p class="muted">오늘 지정된 업무가 없습니다.</p>';
+  document.getElementById('today-meetings').innerHTML = state.events.map(e => `
+    <div class="list-item">
+      <strong>${e.time} · ${e.title}</strong>
+      <div class="meta-row">${badge(e.attendees)} ${e.deleted ? badge('원본 일정 삭제됨', 'wait') : badge('Google Calendar')}</div>
+    </div>`).join('');
+  document.getElementById('okr-pressure').textContent = new Set(state.tasks.map(t => t.krId).filter(Boolean)).size + ' KR';
+  document.getElementById('approval-count').textContent = state.tasks.filter(t => t.status === 'Waiting').length + '건';
+  document.getElementById('hermes-count').textContent = state.hermesJobs.length + '개';
 }
 
-init();
+function renderListTask(t) {
+  const kr = findKr(t.krId);
+  return `<div class="list-item">
+    <strong>${t.title}</strong>
+    <div class="meta-row">${badge(t.priority, t.priority.toLowerCase())}${badge(t.status)}${kr ? badge(kr.title) : ''}</div>
+  </div>`;
+}
+
+function renderTasks() {
+  const filter = document.getElementById('task-filter')?.value || 'all';
+  const statuses = ['Today', 'In Progress', 'This Week', 'Waiting'];
+  const filtered = state.tasks.filter(t => {
+    if (filter === 'all') return true;
+    if (filter === 'P0' || filter === 'P1') return t.priority === filter;
+    return t.status === filter;
+  });
+  document.getElementById('task-board').innerHTML = statuses.map(status => {
+    const tasks = filtered.filter(t => t.status === status);
+    return `<section class="column"><h4>${status}<span>${tasks.length}</span></h4>${tasks.map(renderTaskCard).join('') || '<p class="muted" style="padding:0 6px">비어 있음</p>'}</section>`;
+  }).join('');
+}
+
+function renderTaskCard(t) {
+  const kr = findKr(t.krId);
+  return `<article class="task-card">
+    <button data-edit-task="${t.id}">
+      <h5>${t.title}</h5>
+      <p>${taskSummary(t.body) || '메모 없음'}</p>
+      <div class="meta-row">${badge(t.priority, t.priority.toLowerCase())}${kr ? badge(kr.title) : ''}${t.source === 'Calendar' ? badge('Calendar') : ''}</div>
+    </button>
+  </article>`;
+}
+
+function renderOkrs() {
+  document.getElementById('okr-list').innerHTML = state.okrs.map(o => `<article class="okr-card">
+    <h4>${o.title}</h4>
+    ${o.krs.map(kr => `<div class="kr-row"><div><strong>${kr.title}</strong><div class="progress"><span style="width:${kr.progress}%"></span></div></div><strong>${kr.progress}%</strong></div>`).join('')}
+  </article>`).join('');
+}
+
+function renderCalendar() {
+  document.getElementById('calendar-events').innerHTML = state.events.map(e => `<div class="list-item"><strong>${e.time} · ${e.title}</strong><div class="meta-row">${badge(e.eventId)}${e.deleted ? badge('원본 일정 삭제됨', 'wait') : badge('active', 'done')}</div></div>`).join('');
+}
+
+function renderBriefing() {
+  if (!state.briefings.length) generateBriefing(false);
+  document.getElementById('briefing-list').innerHTML = state.briefings.map(b => `<article class="briefing-item"><p class="eyebrow">${b.type}</p><h4>${b.title}</h4><p class="muted">${b.body}</p><div class="meta-row">${b.refs.map(r => badge(r)).join('')}</div></article>`).join('');
+}
+
+function renderHermes() {
+  document.getElementById('hermes-jobs').innerHTML = state.hermesJobs.map(j => `<div class="list-item"><strong>${j.title}</strong><div class="meta-row">${badge(j.status, j.status.includes('approval') ? 'wait' : '')}</div></div>`).join('');
+}
+
+function renderAll() {
+  renderToday(); renderTasks(); renderOkrs(); renderCalendar(); renderBriefing(); renderHermes();
+}
+
+function openTaskDialog(taskId = '') {
+  const task = state.tasks.find(t => t.id === taskId);
+  document.getElementById('dialog-title').textContent = task ? '업무 수정' : '업무 생성';
+  document.getElementById('task-id').value = task?.id || '';
+  document.getElementById('task-title').value = task?.title || '';
+  document.getElementById('task-priority').value = task?.priority || 'P1';
+  document.getElementById('task-status').value = task?.status || 'Today';
+  document.getElementById('task-body').value = task?.body || '';
+  const krSelect = document.getElementById('task-kr');
+  krSelect.innerHTML = '<option value="">연결 안 함</option>' + krOptions().map(kr => `<option value="${kr.id}">${kr.title}</option>`).join('');
+  krSelect.value = task?.krId || '';
+  document.getElementById('delete-task').style.visibility = task ? 'visible' : 'hidden';
+  document.getElementById('task-dialog').showModal();
+}
+
+function saveTask(event) {
+  event.preventDefault();
+  const id = document.getElementById('task-id').value || crypto.randomUUID();
+  const payload = {
+    id,
+    title: document.getElementById('task-title').value.trim(),
+    priority: document.getElementById('task-priority').value,
+    status: document.getElementById('task-status').value,
+    krId: document.getElementById('task-kr').value,
+    body: document.getElementById('task-body').value,
+    source: state.tasks.find(t => t.id === id)?.source || 'Manual',
+    createdAt: state.tasks.find(t => t.id === id)?.createdAt || new Date().toISOString()
+  };
+  const idx = state.tasks.findIndex(t => t.id === id);
+  if (idx >= 0) state.tasks[idx] = payload; else state.tasks.unshift(payload);
+  saveState(); renderAll(); document.getElementById('task-dialog').close();
+}
+
+function deleteTask() {
+  const id = document.getElementById('task-id').value;
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  saveState(); renderAll(); document.getElementById('task-dialog').close();
+}
+
+function syncCalendarToTasks() {
+  const existing = new Set(state.tasks.filter(t => t.eventId).map(t => t.eventId));
+  const created = [];
+  for (const e of state.events) {
+    if (existing.has(e.eventId)) continue;
+    const task = {
+      id: crypto.randomUUID(),
+      eventId: e.eventId,
+      title: `[미팅 준비] ${e.title}`,
+      priority: 'P1',
+      status: 'Today',
+      krId: 'kr-meeting',
+      body: `- 참석자: ${e.attendees}\n- 일정: ${e.time}\n- 미팅 전 확인할 위키/Notion 자료 붙이기\n- 미팅 후 결정사항과 후속 조치 기록`,
+      source: 'Calendar',
+      createdAt: new Date().toISOString()
+    };
+    state.tasks.unshift(task);
+    created.push(task);
+  }
+  saveState(); renderAll();
+  alert(created.length ? `${created.length}개의 Calendar 업무 후보를 생성했습니다.` : '새로 생성할 Calendar 업무가 없습니다. event_id 기준 중복 방지됨.');
+}
+
+function openOkrDialog() { document.getElementById('okr-title').value = ''; document.getElementById('okr-krs').value = ''; document.getElementById('okr-dialog').showModal(); }
+function saveOkr(event) {
+  event.preventDefault();
+  const title = document.getElementById('okr-title').value.trim();
+  const lines = document.getElementById('okr-krs').value.split('\n').map(s => s.trim()).filter(Boolean);
+  state.okrs.push({ id: crypto.randomUUID(), title, krs: lines.map(line => ({ id: crypto.randomUUID(), title: line, progress: 0 })) });
+  saveState(); renderAll(); document.getElementById('okr-dialog').close();
+}
+
+function generateBriefing(persist = true) {
+  const p0 = state.tasks.filter(t => t.priority === 'P0' && t.status !== 'Done');
+  const meetings = state.events.filter(e => !e.deleted);
+  state.briefings = [
+    { type: '결론', title: `오늘은 P0 ${p0.length}건과 미팅 ${meetings.length}건에 집중`, body: '업무는 OKR과 Calendar 기준으로 압축했습니다. 완료보다 중요한 것은 대표가 오늘 직접 결정해야 할 병목을 제거하는 것입니다.', refs: ['OKR', 'Calendar', 'Tasks'] },
+    { type: '리스크', title: 'Notion/Calendar 실연동 전 보안 경계 유지', body: '현재는 로컬 저장 MVP입니다. OAuth token, Notion secret, Hermes webhook secret은 frontend에 넣지 않습니다.', refs: ['Security', 'Audit log'] },
+    { type: '다음 액션', title: 'Backend + DB + Auth로 실데이터 전환 준비', body: '업무/OKR CRUD 사용성이 고정되면 Supabase 또는 Vercel Postgres 기반 backend와 Google read-only sync를 붙이는 순서가 맞습니다.', refs: ['Backend', 'Google OAuth'] }
+  ];
+  if (persist) { saveState(); renderBriefing(); }
+}
+
+function addHermesJob() {
+  state.hermesJobs.unshift({ id: crypto.randomUUID(), title: 'CEO OS 다음 개발 이슈 분해 및 실행 순서 제안', status: 'queued' });
+  saveState(); renderAll();
+}
+
+function resetDemo() {
+  localStorage.removeItem(STORAGE_KEY);
+  state = structuredClone(seed);
+  saveState(); renderAll();
+}
+
+document.addEventListener('click', (event) => {
+  const viewButton = event.target.closest('[data-view]');
+  if (viewButton) setView(viewButton.dataset.view);
+  const jump = event.target.closest('[data-jump]');
+  if (jump) setView(jump.dataset.jump);
+  const edit = event.target.closest('[data-edit-task]');
+  if (edit) openTaskDialog(edit.dataset.editTask);
+});
+
+document.getElementById('new-task-top').addEventListener('click', () => openTaskDialog());
+document.getElementById('new-task-board').addEventListener('click', () => openTaskDialog());
+document.getElementById('task-form').addEventListener('submit', saveTask);
+document.getElementById('delete-task').addEventListener('click', deleteTask);
+document.getElementById('task-filter').addEventListener('change', renderTasks);
+document.getElementById('sync-calendar').addEventListener('click', syncCalendarToTasks);
+document.getElementById('sync-calendar-2').addEventListener('click', syncCalendarToTasks);
+document.getElementById('new-okr').addEventListener('click', openOkrDialog);
+document.getElementById('okr-form').addEventListener('submit', saveOkr);
+document.getElementById('generate-briefing').addEventListener('click', () => generateBriefing(true));
+document.getElementById('add-hermes-job').addEventListener('click', addHermesJob);
+document.getElementById('reset-demo').addEventListener('click', resetDemo);
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+
+saveState();
+renderAll();

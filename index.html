@@ -2,235 +2,246 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#08090a" />
-    <title>Tounou CEO Cockpit OS Mockup</title>
-    <meta name="description" content="Bryan CEO를 위한 OKR·Calendar·Task·Wiki·Hermes 통합 실행 OS 목업" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Tounou CEO OS</title>
     <link rel="manifest" href="./manifest.json" />
-    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="./assets/icon.svg" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div id="app" class="app-shell">
-      <aside class="sidebar" aria-label="CEO Cockpit navigation">
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="주요 내비게이션">
         <div class="brand-block">
           <div class="brand-mark">T</div>
           <div>
-            <p class="eyebrow">TOUNOU</p>
-            <h1>CEO Cockpit OS</h1>
+            <p class="eyebrow">Bryan OS</p>
+            <h1>Tounou CEO OS</h1>
           </div>
         </div>
-
-        <button class="command-trigger" id="commandTrigger" type="button">
-          <span>⌘K</span>
-          <strong>업무·일정·위키 검색</strong>
-        </button>
-
-        <nav class="nav-list" id="navList"></nav>
-
-        <div class="sidebar-card">
-          <p class="eyebrow">SYSTEM</p>
-          <div class="status-row"><span class="status-dot ok"></span><span>Google Calendar Read Sync</span></div>
-          <div class="status-row"><span class="status-dot ok"></span><span>Wiki Intelligence Ready</span></div>
-          <div class="status-row"><span class="status-dot warn"></span><span>Notion Write-back 승인 대기</span></div>
-        </div>
+        <nav class="nav-list">
+          <button class="nav-item is-active" data-view="today">오늘</button>
+          <button class="nav-item" data-view="tasks">업무</button>
+          <button class="nav-item" data-view="okr">OKR</button>
+          <button class="nav-item" data-view="calendar">캘린더</button>
+          <button class="nav-item" data-view="briefing">브리핑</button>
+          <button class="nav-item" data-view="hermes">Hermes</button>
+        </nav>
+        <section class="sidebar-note">
+          <p class="eyebrow">운영 원칙</p>
+          <p>Notion·Calendar는 원천 시스템, 이 앱은 대표의 실행 레이어입니다.</p>
+        </section>
       </aside>
 
-      <main class="main-stage">
+      <main class="workspace">
         <header class="topbar">
-          <button class="mobile-menu" id="mobileMenu" type="button" aria-label="메뉴 열기">☰</button>
           <div>
-            <p class="eyebrow" id="sectionEyebrow">DAILY EXECUTION</p>
-            <h2 id="sectionTitle">Today Cockpit</h2>
+            <p class="eyebrow">Notion-like Light Workspace</p>
+            <h2 id="view-title">오늘</h2>
           </div>
           <div class="topbar-actions">
-            <button class="ghost-btn" id="densityBtn" type="button">밀도 조정</button>
-            <button class="primary-btn" id="briefingBtn" type="button">AI 브리핑 재생성</button>
+            <button class="btn ghost" id="reset-demo">데모 초기화</button>
+            <button class="btn primary" id="new-task-top">+ 업무 생성</button>
           </div>
         </header>
 
-        <section id="today" class="screen active-screen" aria-labelledby="today-title">
-          <div class="hero-grid">
-            <article class="hero-panel">
-              <div class="panel-kicker"><span class="pulse"></span> 2026.06.29 월요일 · CEO Daily Briefing</div>
-              <h3 id="today-title">오늘 대표가 볼 3가지</h3>
-              <div class="briefing-list" id="briefingList"></div>
-              <div class="hero-actions">
-                <button class="primary-btn" data-open-task="29cm">29CM 미팅 카드 열기</button>
-                <button class="ghost-btn" data-screen="briefing">근거 문서 보기</button>
+        <section class="view is-active" id="view-today">
+          <div class="hero-paper">
+            <div>
+              <p class="eyebrow">오늘 대표가 볼 3가지</p>
+              <h3>Calendar와 OKR을 기준으로 오늘 실행을 압축합니다.</h3>
+              <p class="muted">현재 버전은 로컬 저장 기반 1차 개발본입니다. 실제 Notion/Google 연동 전, 업무/OKR/브리핑 사용성을 먼저 고정합니다.</p>
+            </div>
+            <div class="hero-meta">
+              <span id="today-date"></span>
+              <strong id="today-progress">0%</strong>
+              <small>오늘 완료율</small>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <article class="paper-card">
+              <div class="card-head">
+                <h3>오늘 P0/P1</h3>
+                <button class="text-btn" data-jump="tasks">전체 보기</button>
               </div>
+              <div id="today-focus" class="stack-list"></div>
             </article>
-            <article class="focus-panel">
-              <div class="ring-progress" aria-label="Today completion 42 percent"><span>42%</span></div>
-              <p class="eyebrow">TODAY COMPLETION</p>
-              <h3>완료 5 / 진행 4 / 대기 3</h3>
-              <p class="muted">P0 2건은 오늘 18:00 전 의사결정 필요. Calendar 기반 생성 업무는 자동 반영만 되고 캘린더로 역작성되지 않습니다.</p>
+
+            <article class="paper-card">
+              <div class="card-head">
+                <h3>미팅 준비</h3>
+                <button class="text-btn" id="sync-calendar">Calendar → 업무 후보 생성</button>
+              </div>
+              <div id="today-meetings" class="stack-list"></div>
             </article>
           </div>
 
-          <div class="content-grid three">
-            <article class="panel double">
-              <div class="panel-header">
-                <div>
-                  <p class="eyebrow">PRIORITY TASKS</p>
-                  <h3>오늘 실행 업무</h3>
-                </div>
-                <button class="ghost-btn small" id="newTaskBtn" type="button">+ 업무 생성</button>
-              </div>
-              <div class="task-stack" id="todayTasks"></div>
+          <div class="grid three">
+            <article class="paper-card compact">
+              <p class="eyebrow">OKR 압력</p>
+              <h3 id="okr-pressure">-</h3>
+              <p class="muted">이번 주 업무가 연결된 KR 수</p>
             </article>
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <p class="eyebrow">CALENDAR</p>
-                  <h3>일정 → 업무 자동 연결</h3>
-                </div>
-                <span class="pill">Read only</span>
-              </div>
-              <div class="timeline" id="calendarTimeline"></div>
+            <article class="paper-card compact">
+              <p class="eyebrow">승인 대기</p>
+              <h3 id="approval-count">-</h3>
+              <p class="muted">외부 write-back/발송 전 승인 필요</p>
             </article>
-          </div>
-
-          <div class="content-grid two">
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <p class="eyebrow">OKR SIGNAL</p>
-                  <h3>오늘 업무가 연결된 목표</h3>
-                </div>
-                <button class="ghost-btn small" data-screen="okr">OKR 보기</button>
-              </div>
-              <div class="okr-signal" id="okrSignal"></div>
-            </article>
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <p class="eyebrow">HERMES QUEUE</p>
-                  <h3>AI CEO 실행 큐</h3>
-                </div>
-                <button class="ghost-btn small" data-screen="hermes">상세</button>
-              </div>
-              <div class="job-stack" id="jobStack"></div>
+            <article class="paper-card compact">
+              <p class="eyebrow">Hermes 큐</p>
+              <h3 id="hermes-count">-</h3>
+              <p class="muted">백그라운드 조사·브리핑 후보</p>
             </article>
           </div>
         </section>
 
-        <section id="okr" class="screen" aria-labelledby="okr-title">
-          <div class="section-intro">
-            <p class="eyebrow">OBJECTIVE CENTER</p>
-            <h3 id="okr-title">회사 OKR과 개인 OKR을 업무 생성 기준으로 관리</h3>
-            <p>목표를 따로 적는 시스템이 아니라, 주간/데일리 업무가 어느 KR을 밀고 있는지 즉시 확인하는 화면입니다.</p>
+        <section class="view" id="view-tasks">
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">Weekly · Daily Execution</p>
+              <h3>업무 보드</h3>
+            </div>
+            <div class="toolbar-actions">
+              <select id="task-filter" aria-label="업무 필터">
+                <option value="all">전체</option>
+                <option value="P0">P0</option>
+                <option value="P1">P1</option>
+                <option value="Today">오늘</option>
+                <option value="This Week">이번 주</option>
+              </select>
+              <button class="btn primary" id="new-task-board">+ 업무</button>
+            </div>
           </div>
-          <div class="content-grid two" id="okrBoards"></div>
+          <div class="task-board" id="task-board"></div>
         </section>
 
-        <section id="weekly" class="screen" aria-labelledby="weekly-title">
-          <div class="planner-layout">
-            <article class="panel">
-              <p class="eyebrow">WEEKLY FOCUS</p>
-              <h3 id="weekly-title">이번 주 Focus</h3>
-              <div class="focus-list" id="weeklyFocus"></div>
-            </article>
-            <article class="panel double">
-              <div class="panel-header">
-                <div><p class="eyebrow">KANBAN</p><h3>주간 실행 보드</h3></div>
-                <span class="pill">OKR-linked</span>
+        <section class="view" id="view-okr">
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">Company · Personal OKR</p>
+              <h3>OKR Center</h3>
+            </div>
+            <button class="btn secondary" id="new-okr">+ Objective</button>
+          </div>
+          <div id="okr-list" class="okr-list"></div>
+        </section>
+
+        <section class="view" id="view-calendar">
+          <div class="policy-callout">
+            <h3>Calendar Sync 정책</h3>
+            <ul>
+              <li>Google Calendar → Daily Task 단방향 자동 생성만 허용</li>
+              <li>Daily Task → Calendar 자동 생성 금지</li>
+              <li>event_id 기준 중복 생성 금지</li>
+              <li>원본 일정 삭제 시 업무는 보존하고 “원본 일정 삭제됨” 표시</li>
+            </ul>
+          </div>
+          <div class="grid two">
+            <article class="paper-card">
+              <div class="card-head">
+                <h3>오늘 일정</h3>
+                <button class="text-btn" id="sync-calendar-2">업무 후보 생성</button>
               </div>
-              <div class="kanban" id="kanban"></div>
+              <div id="calendar-events" class="stack-list"></div>
             </article>
-          </div>
-        </section>
-
-        <section id="daily" class="screen" aria-labelledby="daily-title">
-          <div class="daily-layout">
-            <article class="panel agenda-panel">
-              <p class="eyebrow">DAY PLAN</p>
-              <h3 id="daily-title">데일리 플래너</h3>
-              <div class="day-strip" id="dayStrip"></div>
-              <div class="task-stack" id="dailyTasks"></div>
-            </article>
-            <article class="panel editor-preview">
-              <p class="eyebrow">NOTION-LIKE TASK CARD</p>
-              <h3>업무 카드 에디터 미리보기</h3>
-              <div class="editor-card" id="editorPreview"></div>
-            </article>
-          </div>
-        </section>
-
-        <section id="calendar" class="screen" aria-labelledby="calendar-title">
-          <div class="content-grid two">
-            <article class="panel double">
-              <div class="panel-header">
-                <div><p class="eyebrow">GOOGLE CALENDAR</p><h3 id="calendar-title">실시간 Read Sync</h3></div>
-                <span class="pill ok-pill">Connected</span>
-              </div>
-              <div class="calendar-board" id="calendarBoard"></div>
-            </article>
-            <article class="panel">
-              <p class="eyebrow">SYNC RULE</p>
-              <h3>단방향 동기화 정책</h3>
-              <div class="rule-list">
-                <div><strong>Calendar → Daily Task</strong><span>자동 생성 허용</span></div>
-                <div><strong>Daily Task → Calendar</strong><span>자동 생성 금지</span></div>
-                <div><strong>일정 삭제</strong><span>업무 자동 삭제 금지, 원본 삭제 표시</span></div>
-                <div><strong>중복 방지</strong><span>google_event_id 기준 1회 생성</span></div>
+            <article class="paper-card">
+              <h3>연동 준비 상태</h3>
+              <div class="status-list">
+                <p><span class="dot done"></span> 로컬 Calendar event 모델</p>
+                <p><span class="dot done"></span> event_id 중복 방지</p>
+                <p><span class="dot pending"></span> Google OAuth backend</p>
+                <p><span class="dot pending"></span> Incremental sync / watch</p>
               </div>
             </article>
           </div>
         </section>
 
-        <section id="briefing" class="screen" aria-labelledby="briefing-title">
-          <div class="briefing-layout">
-            <article class="panel double">
-              <p class="eyebrow">WIKI INTELLIGENCE</p>
-              <h3 id="briefing-title">위키 기반 AI 브리핑</h3>
-              <div class="briefing-doc" id="briefingDoc"></div>
-            </article>
-            <article class="panel">
-              <p class="eyebrow">SOURCE GRAPH</p>
-              <h3>참조 근거</h3>
-              <div class="source-list" id="sourceList"></div>
-            </article>
+        <section class="view" id="view-briefing">
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">Wiki-based AI Briefing</p>
+              <h3>대표 브리핑 센터</h3>
+            </div>
+            <button class="btn secondary" id="generate-briefing">브리핑 새로고침</button>
           </div>
+          <div id="briefing-list" class="briefing-list"></div>
         </section>
 
-        <section id="hermes" class="screen" aria-labelledby="hermes-title">
-          <div class="content-grid two">
-            <article class="panel double">
-              <div class="panel-header">
-                <div><p class="eyebrow">MAC MINI HERMES</p><h3 id="hermes-title">AI 실행 엔진 상태</h3></div>
-                <button class="primary-btn small" id="runHermesBtn">상태 점검 실행</button>
+        <section class="view" id="view-hermes">
+          <div class="grid two">
+            <article class="paper-card">
+              <div class="card-head">
+                <h3>Hermes 실행 큐</h3>
+                <button class="text-btn" id="add-hermes-job">조사 작업 추가</button>
               </div>
-              <div class="hermes-console" id="hermesConsole"></div>
+              <div id="hermes-jobs" class="stack-list"></div>
             </article>
-            <article class="panel">
-              <p class="eyebrow">APPROVAL GATE</p>
-              <h3>승인 후 실행</h3>
-              <div class="approval-stack" id="approvalStack"></div>
+            <article class="paper-card">
+              <h3>승인 게이트</h3>
+              <p class="muted">AI는 초안·후보 생성까지만 수행합니다. 외부 발송, Notion write-back, Calendar write는 대표 승인 후 실행합니다.</p>
+              <div class="approval-box">
+                <strong>다음 구현</strong>
+                <p>Signed webhook + audit log + backend token vault</p>
+              </div>
             </article>
           </div>
         </section>
       </main>
-
-      <nav class="mobile-tabbar" id="mobileTabbar" aria-label="Mobile navigation"></nav>
     </div>
 
-    <dialog id="taskDialog" class="task-dialog">
-      <form method="dialog" class="dialog-shell">
-        <div class="dialog-header">
+    <nav class="mobile-tabs" aria-label="모바일 내비게이션">
+      <button class="is-active" data-view="today">오늘</button>
+      <button data-view="tasks">업무</button>
+      <button data-view="okr">OKR</button>
+      <button data-view="calendar">캘린더</button>
+      <button data-view="briefing">브리핑</button>
+    </nav>
+
+    <dialog id="task-dialog" class="task-dialog">
+      <form method="dialog" id="task-form">
+        <div class="dialog-head">
           <div>
-            <p class="eyebrow">TASK CARD</p>
-            <h3 id="dialogTitle">업무 카드</h3>
+            <p class="eyebrow">Task Card</p>
+            <h3 id="dialog-title">업무 생성</h3>
           </div>
-          <button class="icon-btn" value="close" aria-label="닫기">×</button>
+          <button class="icon-btn" value="cancel" aria-label="닫기">×</button>
         </div>
-        <div id="dialogBody" class="dialog-body"></div>
+        <input type="hidden" id="task-id" />
+        <label>제목<input id="task-title" required placeholder="예: 29CM 주간 매출 리스크 점검" /></label>
+        <div class="form-grid">
+          <label>우선순위<select id="task-priority"><option>P0</option><option>P1</option><option>P2</option></select></label>
+          <label>상태<select id="task-status"><option>Backlog</option><option>This Week</option><option>Today</option><option>In Progress</option><option>Waiting</option><option>Done</option><option>Dropped</option></select></label>
+          <label>연결 KR<select id="task-kr"></select></label>
+        </div>
+        <label>본문 / Notion식 메모<textarea id="task-body" rows="8" placeholder="- 체크리스트\n- 근거 링크\n- AI 요약\n- 대표 결정 필요"></textarea></label>
+        <div class="dialog-actions">
+          <button type="button" class="btn danger" id="delete-task">삭제</button>
+          <span></span>
+          <button class="btn ghost" value="cancel">취소</button>
+          <button class="btn primary" id="save-task" value="default">저장</button>
+        </div>
       </form>
     </dialog>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <dialog id="okr-dialog" class="task-dialog">
+      <form method="dialog" id="okr-form">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">Objective</p>
+            <h3>Objective 생성</h3>
+          </div>
+          <button class="icon-btn" value="cancel" aria-label="닫기">×</button>
+        </div>
+        <label>Objective<input id="okr-title" required placeholder="예: 3년 내 연매출 1000억을 향한 실행 체계 구축" /></label>
+        <label>Key Result<textarea id="okr-krs" rows="5" placeholder="한 줄에 하나씩 입력"></textarea></label>
+        <div class="dialog-actions right"><button class="btn ghost" value="cancel">취소</button><button class="btn primary" id="save-okr" value="default">저장</button></div>
+      </form>
+    </dialog>
 
     <script src="./app.js"></script>
   </body>

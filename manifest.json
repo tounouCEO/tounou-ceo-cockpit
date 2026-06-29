@@ -1,12 +1,12 @@
 {
-  "name": "Tounou CEO Cockpit OS",
-  "short_name": "CEO Cockpit",
-  "description": "OKR, Calendar, Tasks, Wiki Briefing, Hermes AI를 통합한 Bryan CEO 실행 OS 목업",
-  "start_url": "./index.html",
+  "name": "Tounou CEO OS",
+  "short_name": "CEO OS",
+  "description": "Bryan 대표 전용 Notion-like 업무·OKR·Calendar 실행 OS",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#08090a",
-  "theme_color": "#08090a",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "orientation": "portrait-primary",
   "icons": [
     {
