@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; frame-src https://calendar.google.com; connect-src 'self'; img-src 'self' data: https:; object-src 'none'; base-uri 'self'" />
     <meta name="theme-color" content="#ffffff" />
     <title>Tounou CEO OS</title>
     <link rel="manifest" href="./manifest.json" />
@@ -11,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=polish-1" />
+    <link rel="stylesheet" href="./styles.css?v=exec-2" />
   </head>
   <body>
     <div class="app-shell">
@@ -44,6 +45,7 @@
             <h2 id="view-title">오늘</h2>
           </div>
           <div class="topbar-actions">
+            <button class="btn ghost subtle" data-theme-toggle aria-pressed="false">🌙 다크</button>
             <button class="btn ghost subtle" id="reset-demo">데모 초기화</button>
             <button class="btn primary" id="new-task-top">+ 업무 생성</button>
           </div>
@@ -103,23 +105,38 @@
         <section class="view" id="view-tasks">
           <div class="section-toolbar">
             <div>
-              <p class="eyebrow">주간·일간 실행</p>
-              <h3>업무 보드</h3>
+              <p class="eyebrow">주간·일간·팀 실행</p>
+              <h3>업무 관리 센터</h3>
+              <p class="muted">카드를 끌어서 상태·요일·팀 섹션으로 이동하고, 각 섹션의 + 버튼으로 바로 업무를 생성합니다.</p>
             </div>
             <div class="toolbar-actions">
               <select id="task-filter" aria-label="업무 필터">
                 <option value="all">전체</option>
                 <option value="P0">P0</option>
                 <option value="P1">P1</option>
-                <option value="Today">오늘</option>
-                <option value="This Week">이번 주</option>
+                <option value="Backlog">백로그</option>
+                <option value="In Progress">진행 중</option>
                 <option value="Waiting">대기</option>
                 <option value="Done">완료</option>
               </select>
               <button class="btn primary" id="new-task-board">+ 업무</button>
             </div>
           </div>
-          <div class="task-board" id="task-board"></div>
+
+          <article class="paper-card task-section">
+            <div class="card-head"><h3>전체 현황</h3><span class="muted">백로그 · 진행중 · 대기 · 완료 · 보류</span></div>
+            <div class="task-board status-board" id="task-overview"></div>
+          </article>
+
+          <article class="paper-card task-section">
+            <div class="card-head"><h3>요일별 데일리 업무</h3><span class="muted">월~일 실행 배치</span></div>
+            <div class="task-board week-board" id="task-week"></div>
+          </article>
+
+          <article class="paper-card task-section">
+            <div class="card-head"><h3>팀별 주요업무</h3><span class="muted">CEO · 마케팅 · MD · 디자인 · CX · 개발 · LC</span></div>
+            <div class="task-board team-board" id="task-teams"></div>
+          </article>
         </section>
 
         <section class="view" id="view-okr">
@@ -134,30 +151,36 @@
         </section>
 
         <section class="view" id="view-calendar">
-          <div class="policy-callout">
-            <h3>Calendar Sync 정책</h3>
-            <ul>
-              <li>Google Calendar → Daily Task 단방향 자동 생성만 허용</li>
-              <li>Daily Task → Calendar 자동 생성 금지</li>
-              <li>event_id 기준 중복 생성 금지</li>
-              <li>원본 일정 삭제 시 업무는 보존하고 “원본 일정 삭제됨” 표시</li>
-            </ul>
+          <div class="section-toolbar">
+            <div>
+              <p class="eyebrow">Google Calendar Live Panel</p>
+              <h3>캘린더</h3>
+              <p class="muted">Google Calendar 화면을 그대로 띄우고, 일정 추가·수정은 Google 원본 화면에서 즉시 처리합니다.</p>
+            </div>
+            <div class="toolbar-actions">
+              <button class="btn secondary" id="open-google-calendar">Google Calendar 열기</button>
+              <button class="btn primary" id="sync-calendar-2">업무 후보 생성</button>
+            </div>
           </div>
+          <article class="paper-card calendar-shell">
+            <div class="calendar-controls">
+              <label>Google Calendar embed URL<input id="calendar-url" placeholder="https://calendar.google.com/calendar/embed?..." /></label>
+              <button class="btn ghost" id="save-calendar-url">화면 URL 저장</button>
+            </div>
+            <iframe id="google-calendar-frame" title="Google Calendar" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </article>
           <div class="grid two">
             <article class="paper-card">
-              <div class="card-head">
-                <h3>오늘 일정</h3>
-                <button class="text-btn" id="sync-calendar-2">업무 후보 생성</button>
-              </div>
+              <div class="card-head"><h3>업무 후보화된 일정</h3><button class="text-btn" id="sync-calendar">Calendar → 업무 후보 생성</button></div>
               <div id="calendar-events" class="stack-list"></div>
             </article>
             <article class="paper-card">
-              <h3>연동 준비 상태</h3>
+              <h3>실연동 전환 기준</h3>
               <div class="status-list">
-                <p><span class="dot done"></span> 로컬 Calendar event 모델</p>
+                <p><span class="dot done"></span> Google Calendar 화면 직접 사용</p>
                 <p><span class="dot done"></span> event_id 중복 방지</p>
-                <p><span class="dot pending"></span> Google OAuth backend</p>
-                <p><span class="dot pending"></span> Incremental sync / watch</p>
+                <p><span class="dot pending"></span> 앱 내부 완전 양방향 편집은 OAuth backend 필요</p>
+                <p><span class="dot pending"></span> Secret/token은 frontend 저장 금지</p>
               </div>
             </article>
           </div>
@@ -218,10 +241,19 @@
         <label>제목<input id="task-title" required placeholder="예: 29CM 주간 매출 리스크 점검" /></label>
         <div class="form-grid">
           <label>우선순위<select id="task-priority"><option>P0</option><option>P1</option><option>P2</option></select></label>
-          <label>상태<select id="task-status"><option>Backlog</option><option>This Week</option><option>Today</option><option>In Progress</option><option>Waiting</option><option>Done</option><option>Dropped</option></select></label>
-          <label>연결 KR<select id="task-kr"></select></label>
+          <label>상태<select id="task-status"></select></label>
+          <label>요일<select id="task-day"></select></label>
+          <label>팀<select id="task-team"></select></label>
+          <label class="span-2">연결 KR<select id="task-kr"></select></label>
         </div>
-        <label>본문 / Notion식 메모<textarea id="task-body" rows="8" placeholder="- 체크리스트\n- 근거 링크\n- AI 요약\n- 대표 결정 필요"></textarea></label>
+        <label>본문 / Notion식 편집기
+          <div class="editor-toolbar" aria-label="편집 도구">
+            <button type="button" data-editor-command="bold"><strong>B</strong></button>
+            <button type="button" data-editor-command="insertUnorderedList">• List</button>
+            <button type="button" data-editor-command="formatBlock">문단</button>
+          </div>
+          <div id="task-editor" class="rich-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="체크리스트, 근거 링크, AI 요약, 대표 결정 필요를 입력"></div>
+        </label>
         <div class="dialog-actions">
           <button type="button" class="btn danger" id="delete-task">삭제</button>
           <span></span>
@@ -246,6 +278,6 @@
       </form>
     </dialog>
 
-    <script src="./app.js?v=polish-1"></script>
+    <script src="./app.js?v=exec-2"></script>
   </body>
 </html>
